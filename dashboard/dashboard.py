@@ -14,11 +14,11 @@ import numpy as np
 
 @st.cache_resource
 def load_data():
-    data = pd.read_csv("./data/hour.csv")
+    data = pd.read_csv("../data/hour.csv")
     return data
 
 def load_data_day():
-    data = pd.read_csv("./data/day.csv")
+    data = pd.read_csv("../data/day.csv")
     return data
 
 def create_heatmap(data):
@@ -42,20 +42,25 @@ st.markdown("Author: \n Naznien Fevrianne Malano")
 st.markdown("Contact me through: \n [Linkedin](https://www.linkedin.com/in/naznien-fevrianne-malano-3b59a4190/)  [GitHub Pages](https://naznienfevrianne.github.io/)")
 
 # Show the dataset
-if st.sidebar.checkbox("Show Dataset"):
-    st.subheader("Raw data of hour.csv")
-    st.write(data)
-    st.subheader("Raw data of day.csv")
-    st.write(data_day)
+st.subheader("Raw data of hour.csv")
+st.write(data)
+st.subheader("Raw data of day.csv")
+st.write(data_day)
 
-
-# Display summary statistics
-if st.sidebar.checkbox("Show Summary Statistics"):
     
-    st.subheader("Statistic descriptive of hour.csv")
-    st.write(data.describe())
-    st.subheader("Statistic descriptive of day.csv")
-    st.write(data_day.describe())
+st.subheader("Statistic descriptive of hour.csv")
+st.write(data.describe())
+st.subheader("Statistic descriptive of day.csv")
+st.write(data_day.describe())
+
+st.subheader("Daily rents")
+total_rental = data_day["cnt"].sum()
+st.write("Total rents (1st January 2011 - 31st December 2012): " + str(total_rental))
+daily_count = data.groupby("dteday")['cnt'].sum().reset_index(name="rental_count")
+fig_daily_count = px.line(
+    daily_count, x="dteday", y="rental_count", title="Daily Bike Share Trend")
+st.plotly_chart(fig_daily_count, use_container_width=True,
+                height=400, width=600)
 
 
 st.subheader("Comparing data from day with lowest and highest rental")
@@ -97,8 +102,7 @@ st.plotly_chart(fig_hourly_count, use_container_width=True,
 
 st.subheader("Casual and Registered User Trends")
 
-# Assuming data is your DataFrame with a datetime column (e.g., 'dteday')
-# Make sure 'dteday' is in datetime format
+
 data['dteday'] = pd.to_datetime(data['dteday'])
 
 # Group by 'dteday' and sum the 'casual' and 'registered' counts
@@ -131,28 +135,45 @@ st.plotly_chart(fig_average_cnt_by_day, use_container_width=True,
                 height=400, width=600)
 
 
-
-# # Humidity vs. Bike Share Count
-# # st.subheader("Humidity vs. Bike Share Count")
-# fig_humidity_chart = px.scatter(
-#     data, x="hum", y="cnt", title="Humidity vs. Bike Share Count")
-# st.plotly_chart(fig_humidity_chart)
-
-# # Wind Speed vs. Bike Share Count
-# # st.subheader("Wind Speed vs. Bike Share Count")
-# fig_wind_speed_chart = px.scatter(
-#     data, x="windspeed", y="cnt", title="Wind Speed vs. Bike Share Count")
-# st.plotly_chart(fig_wind_speed_chart)
-
-# # Temperature vs. Bike Share Count
-# # st.subheader("Temperature vs. Bike Share Count")
-# fig_temp_chart = px.scatter(data, x="temp", y="cnt",
-#                             title="Temperature vs. Bike Share Count")
-# st.plotly_chart(fig_temp_chart, use_container_width=True,
-#                 height=400, width=800)
-
 # Show data source and description
-st.sidebar.title("About")
-st.sidebar.info("Dashboard ini menampilkan visualisasi untuk sekumpulan data Bike Share. "
-                "Dataset ini mengandung informasi mengenai penyewaan sepeda berdasarkan berbagai variabel seperti musim, suhu, kelembaban, dan faktor lainnya.")
+st.sidebar.title("Dataset characteristics")
+st.sidebar.info("""Both hour.csv and day.csv have the following fields, except hr which is not available in day.csv
+	
+	- instant: record index
+	- dteday : date
+	- season : season 
+      - 1:spring, 
+      - 2:summer,
+      - 3:fall, 
+      - 4:winter)
+	- yr : year (0: 2011, 
+      1:2012)
+	- mnth : month ( 1 to 12)
+	- hr : hour (0 to 23)
+	- holiday : day is holiday 
+      or not 
+	- weekday : day of the 
+      week
+	- workingday : day is 
+      working day or not
+	+ weathersit : 
+	  - 1: Sunny
+	  - 2: Cloudy
+	  - 3: Light Snow/Rain
+	  - 4: Heavy Snow/Rain
+	- temp : Normalized 
+      temperature in Celsius. 
+	- atemp: Normalized 
+      feeling temperature 
+      in Celsius. 
+	- hum: Normalized 
+      humidity. 
+	- windspeed: Normalized
+      wind speed. 
+	- casual: count of casual 
+      users
+	- registered: count of 
+      registered users
+	- cnt: count of total 
+      rental bikes" """)
 
