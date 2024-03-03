@@ -14,11 +14,11 @@ import numpy as np
 
 @st.cache_resource
 def load_data():
-    data = pd.read_csv("../data/hour.csv")
+    data = pd.read_csv("./data/hour.csv")
     return data
 
 def load_data_day():
-    data = pd.read_csv("../data/day.csv")
+    data = pd.read_csv("./data/day.csv")
     return data
 
 def create_heatmap(data):
